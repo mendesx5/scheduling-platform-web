@@ -1,0 +1,16 @@
+import { api } from './client'; import type * as T from '../types';
+export const authApi={
+ login:(data:{email:string;password:string;tenantSlug:string})=>api<{token:string;type:string}>('/auth/login',{method:'POST',body:JSON.stringify(data)}),
+ register:(data:any)=>api<T.Tenant>('/tenants/register',{method:'POST',body:JSON.stringify(data)}),
+ platformLogin:(data:{email:string;password:string})=>api<{token:string;type:string}>('/platform/auth/login',{method:'POST',body:JSON.stringify(data)})
+};
+export const tenantApi={ me:()=>api<T.Tenant>('/tenants/me'), update:(data:Partial<T.Tenant>)=>api<T.Tenant>('/tenants/me',{method:'PUT',body:JSON.stringify(data)}) };
+export const usersApi={ list:()=>api<T.User[]>('/users'), create:(data:{name:string;email:string;password:string;role:T.Role})=>api<T.User>('/users',{method:'POST',body:JSON.stringify(data)}) };
+export const venuesApi={ list:()=>api<T.Venue[]>('/venues'), get:(id:number)=>api<T.Venue>(`/venues/${id}`), create:(data:Partial<T.Venue>)=>api<T.Venue>('/venues',{method:'POST',body:JSON.stringify(data)}), update:(id:number,data:Partial<T.Venue>)=>api<T.Venue>(`/venues/${id}`,{method:'PUT',body:JSON.stringify(data)}), remove:(id:number)=>api<void>(`/venues/${id}`,{method:'DELETE'}) };
+export const availabilityApi={ list:(venueId:number)=>api<T.Availability[]>(`/venues/${venueId}/availabilities`), create:(venueId:number,data:Partial<T.Availability>)=>api<T.Availability>(`/venues/${venueId}/availabilities`,{method:'POST',body:JSON.stringify(data)}), remove:(venueId:number,id:number)=>api<void>(`/venues/${venueId}/availabilities/${id}`,{method:'DELETE'}) };
+export const blockedApi={ list:(venueId:number)=>api<T.BlockedPeriod[]>(`/venues/${venueId}/blocked-periods`), create:(venueId:number,data:Partial<T.BlockedPeriod>)=>api<T.BlockedPeriod>(`/venues/${venueId}/blocked-periods`,{method:'POST',body:JSON.stringify(data)}), remove:(venueId:number,id:number)=>api<void>(`/venues/${venueId}/blocked-periods/${id}`,{method:'DELETE'}) };
+export const bookingsApi={ list:()=>api<T.Booking[]>('/bookings'), update:(id:number,data:{status?:T.BookingStatus;paymentStatus?:T.PaymentStatus})=>api<T.Booking>(`/bookings/${id}`,{method:'PATCH',body:JSON.stringify(data)}) };
+export const customersApi={ list:()=>api<T.Customer[]>('/customers') };
+export const subscriptionApi={ me:()=>api<T.Subscription>('/subscription') };
+export const publicApi={ tenant:(slug:string)=>api<T.Tenant>(`/public/${slug}`), venues:(slug:string)=>api<T.Venue[]>(`/public/${slug}/venues`), slots:(slug:string,venueId:number,date:string)=>api<string[]>(`/public/${slug}/venues/${venueId}/slots?date=${encodeURIComponent(date)}`), book:(slug:string,data:{venueId:number;customerName:string;customerPhone:string;customerEmail?:string;startDateTime:string})=>api<T.Booking>(`/public/${slug}/bookings`,{method:'POST',body:JSON.stringify(data)}) };
+export const platformApi={ metrics:()=>api<T.PlatformMetrics>('/platform/admin/metrics',{},true), tenants:()=>api<T.Tenant[]>('/platform/admin/tenants',{},true), suspension:(id:number,suspended:boolean)=>api<T.Tenant>(`/platform/admin/tenants/${id}/suspension?suspended=${suspended}`,{method:'PATCH'},true), subscription:(id:number,data:T.Subscription)=>api<T.Subscription>(`/platform/admin/tenants/${id}/subscription`,{method:'PUT',body:JSON.stringify(data)},true) };
