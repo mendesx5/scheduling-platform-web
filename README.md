@@ -1,41 +1,53 @@
-# Scheduling Platform Web
+# Scheduling Platform Web — AgendaHub
 
-Frontend React + TypeScript para o backend `mendesx5/scheduling-platform`.
+Frontend React + TypeScript do SaaS multi-tenant de gestão e reservas de espaços.
 
 ## Áreas
 
-- Página pública por `/{slug}` (também aceita `/p/{slug}`)
-- Cadastro e login de tenant
-- Dashboard do estabelecimento
-- Reservas e pagamentos manuais
-- Espaços, disponibilidade e períodos bloqueados
-- Clientes e equipe com roles
-- Assinatura e personalização pública
-- Login e dashboard global do PLATFORM_ADMIN
+- `/` — Landing Page comercial do SaaS
+- `/login` — login de usuários de tenant
+- `/register` — cadastro com seleção de plano
+- `/{slug}` — página pública de reservas
+- `/app/*` — painel do assinante
+- `/app/onboarding` — configuração inicial
+- `/platform/*` — painel do proprietário da plataforma
 
-## Rodar
+## Stack
+
+- React
+- TypeScript
+- Vite
+- React Router
+- Lucide React
+- CSS responsivo sem framework visual pesado
+
+## Rodando localmente
 
 ```bash
-cp .env.example .env
 npm install
+cp .env.example .env
 npm run dev
 ```
 
-Configure `VITE_API_URL` apontando para a API Spring Boot.
+`.env`:
 
-## Rotas principais
+```env
+VITE_API_URL=http://localhost:8080
+```
 
-- `/login`
-- `/register`
-- `/{slug}`
-- `/app`
-- `/app/bookings`
-- `/app/venues`
-- `/app/venues/:id`
-- `/app/customers`
-- `/app/team`
-- `/app/subscription`
-- `/app/settings`
-- `/platform/login`
-- `/platform`
-- `/platform/tenants`
+## Compatibilidade com a API
+
+O frontend mantém compatibilidade com os recursos existentes da API e já contém contratos/telas para a próxima evolução do backend:
+
+- `PricingType`: FIXED_SLOT, HOURLY, DAILY, PACKAGE
+- pacotes de duração
+- adicionais
+- políticas de reserva
+- cálculo/quote de preço
+- limites de plano
+
+As telas que dependem desses endpoints exibem um estado explícito de "API pendente" até a próxima etapa do backend.
+
+## Planos exibidos
+
+A UI usa os nomes comerciais **Básico, Pro e Plus**, mantendo os valores internos atuais `STARTER`, `PRO` e `BUSINESS` para não quebrar a API existente.

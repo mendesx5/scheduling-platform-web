@@ -1,8 +1,10 @@
-import { api } from './client'; import type * as T from '../types';
+import { api } from './client';
+import type * as T from '../types';
+
 export const authApi={
- login:(data:{email:string;password:string;tenantSlug:string})=>api<{token:string;type:string}>('/auth/login',{method:'POST',body:JSON.stringify(data)}),
- register:(data:any)=>api<T.Tenant>('/tenants/register',{method:'POST',body:JSON.stringify(data)}),
- platformLogin:(data:{email:string;password:string})=>api<{token:string;type:string}>('/platform/auth/login',{method:'POST',body:JSON.stringify(data)})
+  login:(data:{email:string;password:string;tenantSlug:string})=>api<{token:string;type:string}>('/auth/login',{method:'POST',body:JSON.stringify(data)}),
+  register:(data:any)=>api<T.Tenant>('/tenants/register',{method:'POST',body:JSON.stringify(data)}),
+  platformLogin:(data:{email:string;password:string})=>api<{token:string;type:string}>('/platform/auth/login',{method:'POST',body:JSON.stringify(data)})
 };
 export const tenantApi={ me:()=>api<T.Tenant>('/tenants/me'), update:(data:Partial<T.Tenant>)=>api<T.Tenant>('/tenants/me',{method:'PUT',body:JSON.stringify(data)}) };
 export const usersApi={ list:()=>api<T.User[]>('/users'), create:(data:{name:string;email:string;password:string;role:T.Role})=>api<T.User>('/users',{method:'POST',body:JSON.stringify(data)}) };
@@ -12,5 +14,19 @@ export const blockedApi={ list:(venueId:number)=>api<T.BlockedPeriod[]>(`/venues
 export const bookingsApi={ list:()=>api<T.Booking[]>('/bookings'), update:(id:number,data:{status?:T.BookingStatus;paymentStatus?:T.PaymentStatus})=>api<T.Booking>(`/bookings/${id}`,{method:'PATCH',body:JSON.stringify(data)}) };
 export const customersApi={ list:()=>api<T.Customer[]>('/customers') };
 export const subscriptionApi={ me:()=>api<T.Subscription>('/subscription') };
-export const publicApi={ tenant:(slug:string)=>api<T.Tenant>(`/public/${slug}`), venues:(slug:string)=>api<T.Venue[]>(`/public/${slug}/venues`), slots:(slug:string,venueId:number,date:string)=>api<string[]>(`/public/${slug}/venues/${venueId}/slots?date=${encodeURIComponent(date)}`), book:(slug:string,data:{venueId:number;customerName:string;customerPhone:string;customerEmail?:string;startDateTime:string})=>api<T.Booking>(`/public/${slug}/bookings`,{method:'POST',body:JSON.stringify(data)}) };
+
+/** Endpoints below are frontend contracts for the next API evolution. */
+export const packagesApi={ list:(venueId:number)=>api<T.VenuePackage[]>(`/venues/${venueId}/packages`), create:(venueId:number,data:Partial<T.VenuePackage>)=>api<T.VenuePackage>(`/venues/${venueId}/packages`,{method:'POST',body:JSON.stringify(data)}), remove:(venueId:number,id:number)=>api<void>(`/venues/${venueId}/packages/${id}`,{method:'DELETE'}) };
+export const addonsApi={ list:(venueId:number)=>api<T.Addon[]>(`/venues/${venueId}/addons`), create:(venueId:number,data:Partial<T.Addon>)=>api<T.Addon>(`/venues/${venueId}/addons`,{method:'POST',body:JSON.stringify(data)}), remove:(venueId:number,id:number)=>api<void>(`/venues/${venueId}/addons/${id}`,{method:'DELETE'}) };
+export const policiesApi={ get:(venueId:number)=>api<T.VenueBookingPolicy>(`/venues/${venueId}/policy`), save:(venueId:number,data:Partial<T.VenueBookingPolicy>)=>api<T.VenueBookingPolicy>(`/venues/${venueId}/policy`,{method:'PUT',body:JSON.stringify(data)}) };
+
+export const publicApi={
+  tenant:(slug:string)=>api<T.Tenant>(`/public/${slug}`),
+  venues:(slug:string)=>api<T.Venue[]>(`/public/${slug}/venues`),
+  slots:(slug:string,venueId:number,date:string,params?:Record<string,string|number>)=>{const q=new URLSearchParams({date,...Object.fromEntries(Object.entries(params||{}).map(([k,v])=>[k,String(v)]))});return api<string[]>(`/public/${slug}/venues/${venueId}/slots?${q}`)},
+  packages:(slug:string,venueId:number)=>api<T.VenuePackage[]>(`/public/${slug}/venues/${venueId}/packages`),
+  addons:(slug:string,venueId:number)=>api<T.Addon[]>(`/public/${slug}/venues/${venueId}/addons`),
+  quote:(slug:string,data:any)=>api<{baseAmount:number;addonsAmount:number;totalAmount:number;startDateTime:string;endDateTime:string}>(`/public/${slug}/quote`,{method:'POST',body:JSON.stringify(data)}),
+  book:(slug:string,data:any)=>api<T.Booking>(`/public/${slug}/bookings`,{method:'POST',body:JSON.stringify(data)})
+};
 export const platformApi={ metrics:()=>api<T.PlatformMetrics>('/platform/admin/metrics',{},true), tenants:()=>api<T.Tenant[]>('/platform/admin/tenants',{},true), suspension:(id:number,suspended:boolean)=>api<T.Tenant>(`/platform/admin/tenants/${id}/suspension?suspended=${suspended}`,{method:'PATCH'},true), subscription:(id:number,data:T.Subscription)=>api<T.Subscription>(`/platform/admin/tenants/${id}/subscription`,{method:'PUT',body:JSON.stringify(data)},true) };
