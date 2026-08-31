@@ -2,7 +2,7 @@ import { api } from './client';
 import type * as T from '../types';
 
 export const authApi={
-  login:(data:{email:string;password:string;tenantSlug:string})=>api<{token:string;type:string}>('/auth/login',{method:'POST',body:JSON.stringify(data)}),
+  login:(data:{email:string;password:string})=>api<{token:string;type:string}>('/auth/login',{method:'POST',body:JSON.stringify(data)}),
   register:(data:any)=>api<T.Tenant>('/tenants/register',{method:'POST',body:JSON.stringify(data)}),
   platformLogin:(data:{email:string;password:string})=>api<{token:string;type:string}>('/platform/auth/login',{method:'POST',body:JSON.stringify(data)})
 };
@@ -14,6 +14,16 @@ export const blockedApi={ list:(venueId:number)=>api<T.BlockedPeriod[]>(`/venues
 export const bookingsApi={ list:()=>api<T.Booking[]>('/bookings'), update:(id:number,data:{status?:T.BookingStatus;paymentStatus?:T.PaymentStatus})=>api<T.Booking>(`/bookings/${id}`,{method:'PATCH',body:JSON.stringify(data)}) };
 export const customersApi={ list:()=>api<T.Customer[]>('/customers') };
 export const subscriptionApi={ me:()=>api<T.Subscription>('/subscription') };
+export const pageSettingsApi={
+  get:()=>api<T.PageSettings>('/page-settings'),
+  save:(data:Partial<T.PageSettings>)=>api<T.PageSettings>('/page-settings',{method:'PUT',body:JSON.stringify(data)}),
+  gallery:()=>api<T.PageGalleryImage[]>('/page-settings/gallery'),
+  saveGallery:(items:T.PageGalleryImage[])=>api<T.PageGalleryImage[]>('/page-settings/gallery',{method:'PUT',body:JSON.stringify(items)}),
+  highlights:()=>api<T.PageHighlight[]>('/page-settings/highlights'),
+  saveHighlights:(items:T.PageHighlight[])=>api<T.PageHighlight[]>('/page-settings/highlights',{method:'PUT',body:JSON.stringify(items)}),
+  uploadImage:(file:File)=>{const form=new FormData();form.append('file',file);return api<{url:string}>('/page-settings/images',{method:'POST',body:form})}
+};
+export const calendarApi={ month:(start:string,end:string)=>api<T.Booking[]>(`/bookings/calendar?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`) };
 
 /** Endpoints below are frontend contracts for the next API evolution. */
 export const packagesApi={ list:(venueId:number)=>api<T.VenuePackage[]>(`/venues/${venueId}/packages`), create:(venueId:number,data:Partial<T.VenuePackage>)=>api<T.VenuePackage>(`/venues/${venueId}/packages`,{method:'POST',body:JSON.stringify(data)}), remove:(venueId:number,id:number)=>api<void>(`/venues/${venueId}/packages/${id}`,{method:'DELETE'}) };
@@ -22,6 +32,8 @@ export const policiesApi={ get:(venueId:number)=>api<T.VenueBookingPolicy>(`/ven
 
 export const publicApi={
   tenant:(slug:string)=>api<T.Tenant>(`/public/${slug}`),
+  settings:(slug:string)=>api<any>(`/public/${slug}/settings`),
+  page:(slug:string)=>api<T.PublicPageData>(`/public/${slug}/page`),
   venues:(slug:string)=>api<T.Venue[]>(`/public/${slug}/venues`),
   slots:(slug:string,venueId:number,date:string,params?:Record<string,string|number>)=>{const q=new URLSearchParams({date,...Object.fromEntries(Object.entries(params||{}).map(([k,v])=>[k,String(v)]))});return api<string[]>(`/public/${slug}/venues/${venueId}/slots?${q}`)},
   packages:(slug:string,venueId:number)=>api<T.VenuePackage[]>(`/public/${slug}/venues/${venueId}/packages`),
