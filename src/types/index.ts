@@ -3,7 +3,7 @@ export type BookingStatus = 'PENDING'|'CONFIRMED'|'CANCELLED'|'COMPLETED';
 export type PaymentStatus = 'PENDING'|'PAID'|'REFUNDED';
 export type TenantStatus = 'ACTIVE'|'SUSPENDED';
 export type Plan = 'STARTER'|'PRO'|'BUSINESS';
-export type SubscriptionStatus = 'ACTIVE'|'TRIAL'|'PAST_DUE'|'CANCELLED'|'EXPIRED';
+export type SubscriptionStatus = 'ACTIVE'|'TRIAL'|'PAYMENT_PENDING'|'PAST_DUE'|'CANCELLED'|'EXPIRED'|'SUSPENDED';
 export type PricingType = 'FIXED_SLOT'|'HOURLY'|'DAILY'|'PACKAGE';
 export type AddonPricingType = 'FIXED'|'PER_HOUR'|'PER_UNIT';
 
@@ -30,7 +30,7 @@ export interface BlockedPeriod { id:number; tenantId:number; venueId:number; sta
 export interface Customer { id:number; tenantId:number; name:string; phone:string; email?:string }
 export interface BookingAddon { id?:number; addonId:number; quantity:number; unitPrice?:number; totalPrice?:number; addonName?:string }
 export interface Booking { id:number; tenantId:number; venueId:number; customerId:number; startDateTime:string; endDateTime:string; status:BookingStatus; totalAmount:number; paymentStatus:PaymentStatus; createdAt?:string; baseAmount?:number; addonsAmount?:number; discountAmount?:number; notes?:string; addons?:BookingAddon[] }
-export interface Subscription { id?:number; tenantId?:number; plan:Plan; status:SubscriptionStatus; startDate:string; endDate?:string|null }
+export interface Subscription { id?:number; tenantId?:number; plan:Plan; status:SubscriptionStatus; startDate?:string|null; endDate?:string|null; nextBillingDate?:string|null; lastBillingDate?:string|null; asaasCheckoutId?:string|null }
 export interface PlatformMetrics { tenants:number; activeTenants:number; subscriptions:number; bookings:number; grossBookingValue:number }
 
 export interface PageSettings {

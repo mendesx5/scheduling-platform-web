@@ -24,11 +24,12 @@ import PageEditorPage from './pages/admin/PageEditorPage';
 import OnboardingPage from './pages/onboarding/OnboardingPage';
 import PlatformDashboard from './pages/platform/PlatformDashboard';
 import TenantsPage from './pages/platform/TenantsPage';
+import BillingResultPage from './pages/billing/BillingResultPage';
 
 export default function App(){return <BrowserRouter><AuthProvider><Routes>
   <Route path="/" element={<LandingPage/>}/>
   <Route path="/privacidade" element={<PrivacyPage/>}/><Route path="/termos" element={<TermsPage/>}/>
-  <Route path="/login" element={<LoginPage/>}/><Route path="/register" element={<RegisterPage/>}/>
+  <Route path="/login" element={<LoginPage/>}/><Route path="/register" element={<RegisterPage/>}/><Route path="/billing/success" element={<BillingResultPage/>}/><Route path="/billing/cancelled" element={<BillingResultPage/>}/><Route path="/billing/expired" element={<BillingResultPage/>}/>
   <Route path="/p/:slug" element={<PublicBookingPage/>}/><Route path="/platform/login" element={<PlatformLoginPage/>}/>
   <Route element={<TenantProtected/>}><Route path="/app/onboarding" element={<OnboardingPage/>}/><Route path="/app" element={<AdminLayout/>}>
     <Route index element={<DashboardPage/>}/><Route path="agenda" element={<AgendaPage/>}/><Route path="bookings" element={<BookingsPage/>}/>

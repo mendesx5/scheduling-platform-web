@@ -18,7 +18,7 @@ export const PLANS: PlanDefinition[] = [
   {
     value: 'STARTER',
     label: 'Básico',
-    price: 39.9,
+    price: 59.9,
     description: 'Para quem está começando a organizar as reservas.',
     maxVenues: 1,
     maxUsers: 1,
@@ -29,7 +29,7 @@ export const PLANS: PlanDefinition[] = [
   {
     value: 'PRO',
     label: 'Pro',
-    price: 69.9,
+    price: 99.9,
     description: 'Para operações com mais de um espaço e maior flexibilidade.',
     maxVenues: 3,
     maxUsers: 3,
@@ -41,7 +41,7 @@ export const PLANS: PlanDefinition[] = [
   {
     value: 'BUSINESS',
     label: 'Plus',
-    price: 99.9,
+    price: 169.9,
     description: 'Para negócios com operação maior e mais equipe.',
     maxVenues: 5,
     maxUsers: 10,

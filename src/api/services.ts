@@ -3,7 +3,7 @@ import type * as T from '../types';
 
 export const authApi={
   login:(data:{email:string;password:string})=>api<{token:string;type:string}>('/auth/login',{method:'POST',body:JSON.stringify(data)}),
-  register:(data:any)=>api<T.Tenant>('/tenants/register',{method:'POST',body:JSON.stringify(data)}),
+  register:(data:any)=>api<{tenantId:number;checkoutId:string;checkoutUrl:string;plan:string}>('/tenants/register',{method:'POST',body:JSON.stringify(data)}),
   platformLogin:(data:{email:string;password:string})=>api<{token:string;type:string}>('/platform/auth/login',{method:'POST',body:JSON.stringify(data)})
 };
 export const tenantApi={ me:()=>api<T.Tenant>('/tenants/me'), update:(data:Partial<T.Tenant>)=>api<T.Tenant>('/tenants/me',{method:'PUT',body:JSON.stringify(data)}) };
@@ -13,7 +13,8 @@ export const availabilityApi={ list:(venueId:number)=>api<T.Availability[]>(`/ve
 export const blockedApi={ list:(venueId:number)=>api<T.BlockedPeriod[]>(`/venues/${venueId}/blocked-periods`), create:(venueId:number,data:Partial<T.BlockedPeriod>)=>api<T.BlockedPeriod>(`/venues/${venueId}/blocked-periods`,{method:'POST',body:JSON.stringify(data)}), remove:(venueId:number,id:number)=>api<void>(`/venues/${venueId}/blocked-periods/${id}`,{method:'DELETE'}) };
 export const bookingsApi={ list:()=>api<T.Booking[]>('/bookings'), update:(id:number,data:{status?:T.BookingStatus;paymentStatus?:T.PaymentStatus})=>api<T.Booking>(`/bookings/${id}`,{method:'PATCH',body:JSON.stringify(data)}) };
 export const customersApi={ list:()=>api<T.Customer[]>('/customers') };
-export const subscriptionApi={ me:()=>api<T.Subscription>('/subscription') };
+export const subscriptionApi={ me:()=>api<T.Subscription>('/subscription'), cancel:()=>api<void>('/billing/cancel',{method:'POST'}) };
+export const billingApi={ checkoutStatus:(checkoutId:string)=>api<{status:T.SubscriptionStatus;plan:T.Plan}>(`/billing/checkouts/${encodeURIComponent(checkoutId)}`) };
 export const pageSettingsApi={
   get:()=>api<T.PageSettings>('/page-settings'),
   save:(data:Partial<T.PageSettings>)=>api<T.PageSettings>('/page-settings',{method:'PUT',body:JSON.stringify(data)}),
