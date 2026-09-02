@@ -9,13 +9,14 @@ const faqs = [
   ['Preciso instalar alguma coisa?','Não. O sistema funciona no navegador e pode ser usado pelo celular ou computador.'],
   ['Meu cliente precisa criar conta?','Não. Ele acessa sua página pública, escolhe o espaço, a data e solicita a reserva.'],
   ['Posso cadastrar mais de uma quadra ou ambiente?','Sim. A quantidade de espaços depende do seu plano.'],
-  ['Posso cobrar por hora, diária ou pacote?','O frontend já está preparado para esses formatos. Eles serão habilitados junto da próxima evolução da API.'],
+  ['Posso cobrar por hora, diária ou pacote?','Sim. Você escolhe o modelo de cobrança de cada espaço: valor fixo por horário, por hora, por diária ou por pacote fechado.'],
   ['Consigo bloquear horários específicos?','Sim. Você pode manter horários recorrentes e bloquear períodos excepcionais como manutenção ou eventos privados.'],
   ['Posso personalizar minha página?','Sim. Nome, logo, capa, cor principal, contato, Instagram e endereço já fazem parte da personalização.'],
 ];
 
 export default function LandingPage(){
   const [menu,setMenu]=useState(false);
+  const [cycle,setCycle]=useState<'MONTHLY'|'YEARLY'>('MONTHLY');
   return <div className="landing">
     <header className="lp-header"><div className="lp-wrap lp-nav">
       <Link className="lp-brand" to="/">Agenda<span>Hub</span></Link>
@@ -58,10 +59,11 @@ export default function LandingPage(){
 
       <section id="para-quem" className="lp-section"><div className="lp-wrap audience"><div><SectionHead eyebrow="Um sistema, vários negócios" title="Se você aluga um espaço, o AgendaHub se adapta." description="Cada ambiente pode ter suas próprias regras, disponibilidade e forma de cobrança."/><div className="audience-tags">{businessTypes.map(x=><span key={x}>{x}</span>)}</div></div><div className="public-preview"><div className="preview-cover"><small>SUA PÁGINA</small><h3>Arena Central</h3><p>Nova Cruz, RN</p></div><div className="preview-body"><b>Escolha o espaço</b><div className="preview-venues"><span className="selected">Quadra 1<small>R$ 80/h</small></span><span>Quadra 2<small>R$ 70/h</small></span></div><b>Horários disponíveis</b><div className="preview-slots"><span>18:00</span><span>19:00</span><span>20:00</span></div></div></div></div></section>
 
-      <section className="lp-section demo-section"><div className="lp-wrap demo-grid"><div className="demo-copy"><div className="eyebrow">Seu negócio, sua operação</div><h2>Um painel simples para quem precisa resolver, não complicar.</h2><p>Use pelo celular para confirmar reservas, bloquear horários, consultar clientes e acompanhar seus espaços.</p><ul><li><Check/> Dashboard operacional</li><li><Check/> Reservas e pagamentos</li><li><Check/> Agenda por espaço</li><li><Check/> Personalização da página pública</li></ul></div><DashboardMockup/></div></section>
+      <section className="lp-section demo-section"><div className="lp-wrap demo-grid"><div className="demo-copy"><div className="eyebrow">Seu negócio, sua operação</div><h2>Um painel simples para quem precisa resolver, não complicar.</h2><p>Use pelo celular para confirmar reservas, bloquear horários, consultar clientes e acompanhar seus espaços.</p><ul><li><Check/> Dashboard operacional</li><li><Check/> Reservas e status de pagamento</li><li><Check/> Agenda por espaço</li><li><Check/> Personalização da página pública</li></ul></div><DashboardMockup/></div></section>
 
       <section id="planos" className="lp-section"><div className="lp-wrap"><SectionHead eyebrow="Planos para cada fase" title="Comece pequeno e cresça quando precisar" description="A principal diferença está na quantidade de espaços, usuários e recursos de personalização da operação."/>
-        <div className="pricing-grid">{PLANS.map(plan=><article className={plan.highlighted?'price-card featured':'price-card'} key={plan.value}>{plan.highlighted&&<div className="popular">Mais escolhido</div>}<span className="plan-name">{plan.label}</span><p>{plan.description}</p><div className="price"><strong>{money(plan.price)}</strong><small>/mês</small></div><Link className={plan.highlighted?'btn primary full':'btn soft full'} to={`/register?plan=${plan.value}`}>Começar com {plan.label}</Link><ul>{plan.features.map(f=><li key={f}><Check/>{f}</li>)}{plan.comingSoon?.map(f=><li className="soon" key={f}><Sparkles/>{f} <small>em breve</small></li>)}</ul></article>)}</div>
+        <div className="billing-toggle"><button type="button" className={cycle==='MONTHLY'?'active':''} onClick={()=>setCycle('MONTHLY')}>Mensal</button><button type="button" className={cycle==='YEARLY'?'active':''} onClick={()=>setCycle('YEARLY')}>Anual <small>2 meses grátis</small></button></div>
+        <div className="pricing-grid">{PLANS.map(plan=><article className={plan.highlighted?'price-card featured':'price-card'} key={plan.value}>{plan.highlighted&&<div className="popular">Mais escolhido</div>}<span className="plan-name">{plan.label}</span><p>{plan.description}</p><div className="price"><strong>{money(cycle==='YEARLY'?plan.annualPrice/12:plan.price)}</strong><small>/mês{cycle==='YEARLY'?' no plano anual':''}</small></div><Link className={plan.highlighted?'btn primary full':'btn soft full'} to={`/register?plan=${plan.value}&cycle=${cycle}`}>Começar com {plan.label}</Link><ul>{plan.features.map(f=><li key={f}><Check/>{f}</li>)}{plan.comingSoon?.map(f=><li className="soon" key={f}><Sparkles/>{f} <small>em breve</small></li>)}</ul></article>)}</div>
         <p className="pricing-note">Valores e recursos são a proposta comercial inicial e podem ser ajustados antes do lançamento.</p>
       </div></section>
 

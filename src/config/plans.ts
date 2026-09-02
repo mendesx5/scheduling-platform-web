@@ -4,6 +4,7 @@ export interface PlanDefinition {
   value: Plan;
   label: string;
   price: number;
+  annualPrice: number;
   description: string;
   maxVenues: number;
   maxUsers: number;
@@ -19,6 +20,7 @@ export const PLANS: PlanDefinition[] = [
     value: 'STARTER',
     label: 'Básico',
     price: 59.9,
+    annualPrice: 599,
     description: 'Para quem está começando a organizar as reservas.',
     maxVenues: 1,
     maxUsers: 1,
@@ -30,6 +32,7 @@ export const PLANS: PlanDefinition[] = [
     value: 'PRO',
     label: 'Pro',
     price: 99.9,
+    annualPrice: 999,
     description: 'Para operações com mais de um espaço e maior flexibilidade.',
     maxVenues: 3,
     maxUsers: 3,
@@ -42,6 +45,7 @@ export const PLANS: PlanDefinition[] = [
     value: 'BUSINESS',
     label: 'Plus',
     price: 169.9,
+    annualPrice: 1699,
     description: 'Para negócios com operação maior e mais equipe.',
     maxVenues: 5,
     maxUsers: 10,
