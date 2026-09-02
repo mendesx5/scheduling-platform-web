@@ -39,7 +39,7 @@ export const PLANS: PlanDefinition[] = [
     maxAddons: 15,
     maxPackages: 8,
     highlighted: true,
-    features: ['Até 3 espaços', 'Até 3 usuários', 'Cobrança por hora, diária e pacote', 'Sem marca AgendaHub', 'Funcionários com acesso restrito', '5 fotos na galeria'],
+    features: ['Até 3 espaços','Até 3 usuários','Cobrança por hora, diária e pacote','Sem marca AgendaHub','Funcionários com acesso restrito','Dashboard e gráfico semanal','5 fotos na galeria'],
   },
   {
     value: 'BUSINESS',
@@ -51,7 +51,7 @@ export const PLANS: PlanDefinition[] = [
     maxUsers: 10,
     maxAddons: 50,
     maxPackages: 20,
-    features: ['Até 5 espaços', 'Até 10 usuários', 'Tudo do Pro', 'Galeria ilimitada', 'Relatórios avançados', 'Subdomínio personalizado', 'Suporte prioritário'],
+    features: ['Até 5 espaços','Até 10 usuários','Tudo do Pro','Galeria ilimitada','Dashboard mensal e comparativos','Ocupação, ticket médio e cancelamentos','Relatórios avançados','Subdomínio personalizado','Suporte prioritário'],
     comingSoon: ['Relatórios avançados', 'Subdomínio personalizado', 'Suporte prioritário'],
   },
 ];

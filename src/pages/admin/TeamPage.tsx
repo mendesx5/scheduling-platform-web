@@ -4,7 +4,7 @@ import type {Role,Subscription,User} from '../../types';
 import {Card,Field,Empty,Badge} from '../../components/ui';
 import {useAuth} from '../../contexts/AuthContext';
 import {planDefinition} from '../../config/plans';
-import {Users} from 'lucide-react';
+import {Users,Power,Trash2} from 'lucide-react';
 
 export default function TeamPage(){
   const [items,setItems]=useState<User[]>([]);
@@ -50,7 +50,7 @@ export default function TeamPage(){
       </Card>
       <Card>
         <h2>Usuários</h2>
-        {!items.length?<Empty title="Sem usuários visíveis" description="Sua permissão pode não permitir listar a equipe."/>:<div className="stack">{items.map(u=><div className="row-item team-row" key={u.id}><div className="avatar"><Users/></div><span><strong>{u.name}</strong><small>{u.email}</small></span><Badge tone={u.role==='OWNER'?'success':'neutral'}>{u.role}</Badge></div>)}</div>}
+        {!items.length?<Empty title="Sem usuários visíveis" description="Sua permissão pode não permitir listar a equipe."/>:<div className="stack">{items.map(u=><div className="row-item team-row" key={u.id}><div className="avatar"><Users/></div><span><strong>{u.name}</strong><small>{u.email}</small></span><Badge tone={!u.active?'warning':u.role==='OWNER'?'success':'neutral'}>{!u.active?'Inativo':u.role}</Badge>{u.role!=='OWNER'&&isOwner&&<div className="actions"><button className="icon" title={u.active?'Desativar':'Reativar'} onClick={async()=>{await usersApi.setActive(u.id,!u.active);load()}}><Power size={15}/></button><button className="icon danger-text" title="Excluir" onClick={async()=>{if(confirm('Excluir este usuário?')){await usersApi.remove(u.id);load()}}}><Trash2 size={15}/></button></div>}</div>)}</div>}
       </Card>
     </div>
   </>;

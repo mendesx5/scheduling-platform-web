@@ -1,5 +1,6 @@
 import {BrowserRouter,Route,Routes} from 'react-router-dom';
 import {AuthProvider} from './contexts/AuthContext';
+import {I18nProvider} from './contexts/I18nContext';
 import {TenantProtected,PlatformProtected} from './components/ProtectedRoute';
 import LandingPage from './pages/landing/LandingPage';
 import PrivacyPage from './pages/legal/PrivacyPage';
@@ -25,11 +26,12 @@ import OnboardingPage from './pages/onboarding/OnboardingPage';
 import PlatformDashboard from './pages/platform/PlatformDashboard';
 import TenantsPage from './pages/platform/TenantsPage';
 import BillingResultPage from './pages/billing/BillingResultPage';
+import PasswordResetPage from './pages/auth/PasswordResetPage';
 
-export default function App(){return <BrowserRouter><AuthProvider><Routes>
+export default function App(){return <BrowserRouter><I18nProvider><AuthProvider><Routes>
   <Route path="/" element={<LandingPage/>}/>
   <Route path="/privacidade" element={<PrivacyPage/>}/><Route path="/termos" element={<TermsPage/>}/>
-  <Route path="/login" element={<LoginPage/>}/><Route path="/register" element={<RegisterPage/>}/><Route path="/billing/success" element={<BillingResultPage/>}/><Route path="/billing/cancelled" element={<BillingResultPage/>}/><Route path="/billing/expired" element={<BillingResultPage/>}/>
+  <Route path="/login" element={<LoginPage/>}/><Route path="/forgot-password" element={<PasswordResetPage/>}/><Route path="/reset-password" element={<PasswordResetPage/>}/><Route path="/platform/forgot-password" element={<PasswordResetPage platform/>}/><Route path="/platform/reset-password" element={<PasswordResetPage platform/>}/><Route path="/register" element={<RegisterPage/>}/><Route path="/billing/success" element={<BillingResultPage/>}/><Route path="/billing/cancelled" element={<BillingResultPage/>}/><Route path="/billing/expired" element={<BillingResultPage/>}/>
   <Route path="/p/:slug" element={<PublicBookingPage/>}/><Route path="/platform/login" element={<PlatformLoginPage/>}/>
   <Route element={<TenantProtected/>}><Route path="/app/onboarding" element={<OnboardingPage/>}/><Route path="/app" element={<AdminLayout/>}>
     <Route index element={<DashboardPage/>}/><Route path="agenda" element={<AgendaPage/>}/><Route path="bookings" element={<BookingsPage/>}/>
@@ -40,4 +42,4 @@ export default function App(){return <BrowserRouter><AuthProvider><Routes>
   <Route element={<PlatformProtected/>}><Route path="/platform" element={<PlatformLayout/>}><Route index element={<PlatformDashboard/>}/><Route path="tenants" element={<TenantsPage/>}/></Route></Route>
   <Route path="/:slug" element={<PublicBookingPage/>}/>
   <Route path="*" element={<div className="notfound"><h1>404</h1><p>Página não encontrada.</p><a className="btn primary" href="/">Voltar para o início</a></div>}/>
-</Routes></AuthProvider></BrowserRouter>}
+</Routes></AuthProvider></I18nProvider></BrowserRouter>}
