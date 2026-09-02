@@ -6,6 +6,7 @@ export const authApi={
   register:(data:any)=>api<{tenantId:number;checkoutId:string;checkoutUrl:string;plan:string}>('/tenants/register',{method:'POST',body:JSON.stringify(data)}),
   platformLogin:(data:{email:string;password:string})=>api<{token:string;type:string}>('/platform/auth/login',{method:'POST',body:JSON.stringify(data)})
 };
+export const planApi={ current:()=>api<{plan:T.Plan;limits:{maxVenues:number;maxUsers:number;maxAddons:number;maxPackages:number;maxGalleryImages:number};features:{advancedPricing:boolean;removeBranding:boolean;employeeRole:boolean}}>('/plan') };
 export const tenantApi={ me:()=>api<T.Tenant>('/tenants/me'), update:(data:Partial<T.Tenant>)=>api<T.Tenant>('/tenants/me',{method:'PUT',body:JSON.stringify(data)}) };
 export const usersApi={ list:()=>api<T.User[]>('/users'), create:(data:{name:string;email:string;password:string;role:T.Role})=>api<T.User>('/users',{method:'POST',body:JSON.stringify(data)}) };
 export const venuesApi={ list:()=>api<T.Venue[]>('/venues'), get:(id:number)=>api<T.Venue>(`/venues/${id}`), create:(data:Partial<T.Venue>)=>api<T.Venue>('/venues',{method:'POST',body:JSON.stringify(data)}), update:(id:number,data:Partial<T.Venue>)=>api<T.Venue>(`/venues/${id}`,{method:'PUT',body:JSON.stringify(data)}), remove:(id:number)=>api<void>(`/venues/${id}`,{method:'DELETE'}) };

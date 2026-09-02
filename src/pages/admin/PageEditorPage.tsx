@@ -1,5 +1,5 @@
 import {useEffect,useState} from 'react';
-import {pageSettingsApi,tenantApi} from '../../api/services';
+import {pageSettingsApi,planApi,tenantApi} from '../../api/services';
 import type {PageGalleryImage,PageHighlight,PageSettings,Tenant} from '../../types';
 import {Field} from '../../components/ui';
 import {Check,ExternalLink,ImagePlus,LayoutTemplate,Plus,Save,Trash2,Upload} from 'lucide-react';
@@ -22,9 +22,9 @@ export default function PageEditorPage(){
   const [tenant,setTenant]=useState<Tenant>();
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState('');
-  const [error,setError]=useState('');
+  const [error,setError]=useState(''); const [maxGalleryImages,setMaxGalleryImages]=useState(1);
 
-  useEffect(()=>{Promise.all([pageSettingsApi.get(),pageSettingsApi.gallery(),pageSettingsApi.highlights(),tenantApi.me()]).then(([s,g,h,t])=>{setSettings({...defaults,...s});setGallery(g);setHighlights(h);setTenant(t)}).catch((e:any)=>setError(e.message))},[]);
+  useEffect(()=>{Promise.all([pageSettingsApi.get(),pageSettingsApi.gallery(),pageSettingsApi.highlights(),tenantApi.me(),planApi.current()]).then(([s,g,h,t,p])=>{setSettings({...defaults,...s});setGallery(g);setHighlights(h);setTenant(t);setMaxGalleryImages(p.limits.maxGalleryImages)}).catch((e:any)=>setError(e.message))},[]);
   const set=(key:keyof PageSettings,value:any)=>setSettings(p=>({...p,[key]:value}));
 
   async function save(){
@@ -39,7 +39,7 @@ export default function PageEditorPage(){
       const {url}=await pageSettingsApi.uploadImage(file);
       if(applyTo==='hero')set('heroImageUrl',url);
       else if(applyTo==='about')set('aboutImageUrl',url);
-      else setGallery(g=>[...g,{imageUrl:url,altText:'Foto do espaço',sortOrder:g.length}]);
+      else setGallery(g=>g.length<maxGalleryImages?[...g,{imageUrl:url,altText:'Foto do espaço',sortOrder:g.length}]:g);
     }catch(e:any){setError(e.message)}
   }
   const preview=tenant?`/${tenant.slug}`:'#';
@@ -70,9 +70,9 @@ export default function PageEditorPage(){
       <button className="btn ghost" onClick={()=>setHighlights(x=>[...x,{title:'Novo item',description:'Descreva o que está incluso.',sortOrder:x.length}])}><Plus size={16}/>Adicionar item</button>
     </section>
 
-    <section className="editor-card"><div className="editor-card-title"><ImagePlus/><div><h2>Galeria de fotos</h2><p>Adicione fotos por upload ou URL. A página monta automaticamente uma galeria elegante.</p></div></div>
+    <section className="editor-card"><div className="editor-card-title"><ImagePlus/><div><h2>Galeria de fotos</h2><p>Adicione fotos por upload ou URL. Seu plano permite até {maxGalleryImages===2147483647?'ilimitadas':maxGalleryImages} foto(s).</p></div></div>
       <div className="gallery-editor">{gallery.map((g,i)=><div className="gallery-edit-item" key={i}><img src={g.imageUrl}/><div><input value={g.imageUrl} placeholder="URL da imagem" onChange={e=>setGallery(x=>x.map((v,n)=>n===i?{...v,imageUrl:e.target.value}:v))}/><input value={g.altText||''} placeholder="Descrição da foto" onChange={e=>setGallery(x=>x.map((v,n)=>n===i?{...v,altText:e.target.value}:v))}/></div><button onClick={()=>setGallery(x=>x.filter((_,n)=>n!==i))}><Trash2/></button></div>)}</div>
-      <div className="upload-row"><label className="btn ghost"><Upload size={16}/>Enviar foto<input hidden type="file" accept="image/*" onChange={e=>e.target.files?.[0]&&upload(e.target.files[0],'gallery')}/></label><button className="btn ghost" onClick={()=>setGallery(x=>[...x,{imageUrl:'',altText:'Foto do espaço',sortOrder:x.length}])}><Plus size={16}/>Adicionar URL</button></div>
+      <div className="upload-row"><label className="btn ghost"><Upload size={16}/>Enviar foto<input hidden type="file" accept="image/*" onChange={e=>e.target.files?.[0]&&upload(e.target.files[0],'gallery')}/></label><button className="btn ghost" disabled={gallery.length>=maxGalleryImages} onClick={()=>setGallery(x=>x.length<maxGalleryImages?[...x,{imageUrl:'',altText:'Foto do espaço',sortOrder:x.length}]:x)}><Plus size={16}/>Adicionar URL</button></div>
     </section>
 
     <section className="editor-card"><div className="editor-card-title"><Check/><div><h2>Seções visíveis</h2><p>Ative apenas o que faz sentido para seu negócio.</p></div></div>

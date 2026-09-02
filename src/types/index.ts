@@ -68,4 +68,5 @@ export interface PublicPageData {
   gallery:PageGalleryImage[];
   highlights:PageHighlight[];
   venues:Venue[];
+  brandingRemoved:boolean;
 }

@@ -1,5 +1,5 @@
 import {useEffect,useState} from 'react';
-import {subscriptionApi,usersApi} from '../../api/services';
+import {planApi,subscriptionApi,usersApi} from '../../api/services';
 import type {Role,Subscription,User} from '../../types';
 import {Card,Field,Empty,Badge} from '../../components/ui';
 import {useAuth} from '../../contexts/AuthContext';
@@ -8,12 +8,12 @@ import {Users} from 'lucide-react';
 
 export default function TeamPage(){
   const [items,setItems]=useState<User[]>([]);
-  const [sub,setSub]=useState<Subscription>();
+  const [sub,setSub]=useState<Subscription>(); const [employeeEnabled,setEmployeeEnabled]=useState(false);
   const [form,setForm]=useState<{name:string;email:string;password:string;role:Role}>({name:'',email:'',password:'',role:'EMPLOYEE'});
   const [error,setError]=useState('');
   const {claims}=useAuth();
-  const load=()=>Promise.all([usersApi.list(),subscriptionApi.me()]).then(([u,s])=>{setItems(u);setSub(s)}).catch(()=>setItems([]));
-  useEffect(()=>{load()},[]);
+  const load=()=>Promise.all([usersApi.list(),subscriptionApi.me()]).then(([u,s])=>{setItems(u);setSub(s);planDefinition(s.plan)}).catch(()=>setItems([]));
+  useEffect(()=>{load(); planApi.current().then(p=>setEmployeeEnabled(p.features.employeeRole)).catch(()=>{})},[]);
   const isOwner=claims?.role==='OWNER';
   const plan=planDefinition(sub?.plan);
   const atLimit=items.length>=plan.maxUsers;
@@ -43,7 +43,7 @@ export default function TeamPage(){
           <Field label="Nome"><input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></Field>
           <Field label="E-mail"><input required type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/></Field>
           <Field label="Senha"><input required minLength={8} type="password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})}/></Field>
-          <Field label="Permissão"><select value={form.role} onChange={e=>setForm({...form,role:e.target.value as Role})}><option value="EMPLOYEE">Funcionário</option>{isOwner&&<><option value="MANAGER">Gerente</option><option value="OWNER">Proprietário</option></>}</select></Field>
+          <Field label="Permissão"><select value={form.role} onChange={e=>setForm({...form,role:e.target.value as Role})}><option value="EMPLOYEE" disabled={!employeeEnabled}>Funcionário{!employeeEnabled?' (Pro+)':''}</option>{isOwner&&<><option value="MANAGER">Gerente</option><option value="OWNER">Proprietário</option></>}</select></Field>
           {error&&<div className="alert danger">{error}</div>}
           <button disabled={atLimit} className="btn primary full">Adicionar usuário</button>
         </form>

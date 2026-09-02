@@ -171,6 +171,6 @@ export default function PublicBookingPage(){
     {s.showLocation&&tenant.address&&<section id="localizacao" className="public-location"><div><MapPin/><span>Localização</span><h2>Fácil de encontrar.</h2><p>{tenant.address}</p></div>{tenant.phone&&<a className="public-cta" href={`https://wa.me/${tenant.phone.replace(/\D/g,'')}`} target="_blank">Falar no WhatsApp</a>}</section>}
 
     <BookingForm slug={slug} venues={venues}/>
-    <footer className="public-footer-lp"><strong>{tenant.name}</strong><span>Reservas online</span>{tenant.instagram&&<span>{tenant.instagram}</span>}</footer>
+    <footer className="public-footer-lp"><strong>{tenant.name}</strong><span>Reservas online</span>{tenant.instagram&&<span>{tenant.instagram}</span>}{!page.brandingRemoved&&<small>Feito com AgendaHub</small>}</footer>
   </div>
 }

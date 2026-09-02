@@ -4,7 +4,6 @@ import {addonsApi,availabilityApi,blockedApi,packagesApi,policiesApi,venuesApi} 
 import type {Addon,Availability,BlockedPeriod,Venue,VenueBookingPolicy,VenuePackage} from '../../types';
 import {Badge,Card,Field,dateTime,money} from '../../components/ui';
 import {ArrowLeft,CalendarClock,Clock3,Gift,LockKeyhole,PackageOpen,Settings2} from 'lucide-react';
-import {FEATURES} from '../../config/features';
 const days=['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'];
 const dayLabel:Record<string,string>={MONDAY:'Segunda',TUESDAY:'Terça',WEDNESDAY:'Quarta',THURSDAY:'Quinta',FRIDAY:'Sexta',SATURDAY:'Sábado',SUNDAY:'Domingo'};
 type Tab='availability'|'blocked'|'packages'|'addons'|'policy';
@@ -32,10 +31,9 @@ export default function VenueSchedulePage(){
   useEffect(()=>{loadCore()},[id]);
 
   useEffect(()=>{
-    if(!FEATURES.advancedPricingApi){if(tab==='packages'||tab==='addons'||tab==='policy')setFutureUnavailable(x=>({...x,[tab]:true}));return;}
-    if(tab==='packages')packagesApi.list(id).then(setPackages).catch(()=>setFutureUnavailable(x=>({...x,packages:true})));
-    if(tab==='addons')addonsApi.list(id).then(setAddons).catch(()=>setFutureUnavailable(x=>({...x,addons:true})));
-    if(tab==='policy')policiesApi.get(id).then(setPolicy).catch(()=>setFutureUnavailable(x=>({...x,policy:true})));
+    if(tab==='packages')packagesApi.list(id).then(setPackages).catch((e:any)=>setErr('packages',e.message||'Não foi possível carregar os pacotes.'));
+    if(tab==='addons')addonsApi.list(id).then(setAddons).catch((e:any)=>setErr('addons',e.message||'Não foi possível carregar os adicionais.'));
+    if(tab==='policy')policiesApi.get(id).then(setPolicy).catch((e:any)=>setErr('policy',e.message||'Não foi possível carregar as regras.'));
   },[tab,id]);
 
   const tabs:[Tab,string,any][]=[['availability','Disponibilidade',Clock3],['blocked','Bloqueios',LockKeyhole],['packages','Pacotes',PackageOpen],['addons','Adicionais',Gift],['policy','Regras',Settings2]];
@@ -73,7 +71,7 @@ export default function VenueSchedulePage(){
       <Card><h2>Próximos bloqueios</h2><div className="stack">{bl.length?bl.map(x=><div className="row-item" key={x.id}><span><strong>{x.reason||'Bloqueio'}</strong><small>{dateTime(x.startDateTime)} → {dateTime(x.endDateTime)}</small></span><button className="linkbtn danger-text" onClick={async()=>{await blockedApi.remove(id,x.id);loadCore()}}>Remover</button></div>):<div className="empty"><CalendarClock/><strong>Nenhum bloqueio</strong><span>O espaço segue a disponibilidade semanal.</span></div>}</div></Card>
     </div>}
 
-    {tab==='packages'&&<FutureFeature unavailable={futureUnavailable.packages} title="Pacotes de duração" description="Crie opções fechadas como 2 horas por R$ 150 ou 4 horas por R$ 270. O frontend está pronto; falta o endpoint correspondente na API.">
+    {tab==='packages'&&<FutureFeature unavailable={futureUnavailable.packages} title="Pacotes de duração" description="Crie opções fechadas como 2 horas por R$ 150 ou 4 horas por R$ 270.">
       <div className="split">
         <Card>
           <h2>Novo pacote</h2>
